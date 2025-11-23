@@ -1,0 +1,18 @@
+{% extends "pedidos/base.html" %}
+{% block title %}Menú{% endblock %}
+{% block content %}
+<h2>Menú</h2>
+<p><a href="{% url 'crear_pedido' %}">Hacer un pedido</a></p>
+{% for cat in categorias %}
+  <section>
+    <h3>{{ cat.nombre }}</h3>
+    <ul>
+    {% for p in cat.productos.all %}
+      <li>{{ p.nombre }} - ${{ p.precio }}<br><small>{{ p.descripcion }}</small></li>
+    {% empty %}
+      <li>No hay productos en esta categoría.</li>
+    {% endfor %}
+    </ul>
+  </section>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "pedidos/base.html" %}
+{% block title %}Crear Pedido{% endblock %}
+{% block content %}
+<h2>Crear Pedido</h2>
+{% if error %}<p style="color:red">{{ error }}</p>{% endif %}
+<form method="post">
+  {% csrf_token %}
+  <fieldset>
+    <legend>Datos del cliente</legend>
+    {{ pedido_form.as_p }}
+  </fieldset>
+  <fieldset>
+    <legend>Productos (indica cantidad y personalización)</legend>
+    {% for p in productos %}
+      <div class="producto">
+        <strong>{{ p.nombre }}</strong> - ${{ p.precio }}<br>
+        <label>Cantidad: <input type="number" name="producto_{{ p.id }}" value="0" min="0"></label>
+        <label>Personalización: <input type="text" name="personal_{{ p.id }}" placeholder="ej: sin cebolla, extra queso"></label>
+      </div>
+      <hr>
+    {% endfor %}
+  </fieldset>
+  <button type="submit">Enviar pedido</button>
+</form>
+{% endblock %}

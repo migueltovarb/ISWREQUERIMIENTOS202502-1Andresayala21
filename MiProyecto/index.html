@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurante Sabores - Pedidos en Línea</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .menu-section {
+            display: grid;
+            gap: 20px;
+        }
+
+        .menu-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .item-image {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            flex-shrink: 0;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .item-description {
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .item-price {
+            font-size: 1.3em;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .btn-add:hover {
+            transform: scale(1.05);
+        }
+
+        .cart-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .cart-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .cart-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .cart-item-price {
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        .cart-item-custom {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .btn-remove {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+
+        .cart-total {
+            border-top: 2px solid #ddd;
+            padding-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .total-label {
+            font-size: 1.3em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            color: #333;
+        }
+
+        .btn-order {
+            width: 100%;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .btn-order:hover {
+            transform: scale(1.02);
+        }
+
+        .btn-order:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .customize-option {
+            margin-bottom: 20px;
+        }
+
+        .option-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            color: #333;
+        }
+
+        .option-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-btn.selected {
+            border-color: #ff6b35;
+            background: #ff6b35;
+            color: white;
+        }
+
+        .extras-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .extra-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .extra-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .notification-message {
+            color: #666;
+        }
+
+        .empty-cart {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+        }
+
+        .empty-cart-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-section {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍽️ Restaurante Sabores</h1>
+            <p class="subtitle">Haz tu pedido en línea y personalízalo a tu gusto</p>
+        </header>
+
+        <div class="main-content">
+            <div class="menu-section" id="menu">
+                <!-- Los items se cargarán aquí -->
+            </div>
+
+            <div class="cart-section">
+                <h2 class="cart-title">🛒 Tu Pedido</h2>
+                <div class="cart-items" id="cartItems">
+                    <div class="empty-cart">
+                        <div class="empty-cart-icon">🍴</div>
+                        <p>Tu carrito está vacío</p>
+                    </div>
+                </div>
+                <div class="cart-total" id="cartTotal" style="display: none;">
+                    <div class="total-label">
+                        <span>Total:</span>
+                        <span id="totalAmount">$0</span>
+                    </div>
+                </div>
+                <button class="btn-order" id="btnOrder" onclick="placeOrder()" disabled>
+                    Realizar Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Personalización -->
+    <div class="modal" id="customizeModal">
+        <div class="modal-content">
+            <h2 class="modal-header" id="modalTitle">Personaliza tu orden</h2>
+            
+            <div class="customize-option">
+                <label class="option-label">Tamaño:</label>
+                <div class="option-group" id="sizeOptions">
+                    <button class="option-btn" onclick="selectSize('Pequeño', 0)">Pequeño</button>
+                    <button class="option-btn selected" onclick="selectSize('Mediano', 0)">Mediano</button>
+                    <button class="option-btn" onclick="selectSize('Grande', 2)">Grande (+$2)</button>
+                </div>
+            </div>
+
+            <div class="customize-option">
+                <label class="option-label">Extras (opcional):</label>
+                <div class="extras-group">
+                    <label class="extra-option">
+                        <input type="checkbox" value="Queso extra" data-price="1">
+                        <span>Queso extra (+$1)</span>
+                    </label>
+                    <label class="extra-option">
+                        <input type="checkbox" value="Aguacate" data-price="1.5">
+                        <span>Aguacate (+$1.5)</span>
+                    </label>
+                    <label class="extra-option">
+                        <input type="checkbox" value="Tocineta" data-price="2">
+                        <span>Tocineta (+$2)</span>
+                    </label>
+                    <label class="extra-option">
+                        <input type="checkbox" value="Jalapeños" data-price="0.5">
+                        <span>Jalapeños (+$0.5)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="customize-option">
+                <label class="option-label">Notas especiales:</label>
+                <textarea id="specialNotes" placeholder="Ej: Sin cebolla, término medio, etc."></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-confirm" onclick="confirmCustomization()">Agregar al carrito</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div class="notification" id="notification">
+        <div class="notification-title" id="notificationTitle">Notificación</div>
+        <div class="notification-message" id="notificationMessage">Mensaje</div>
+    </div>
+
+    <script>
+        // Datos del menú
+        const menuItems = [
+            {
+                id: 1,
+                name: 'Hamburguesa Clásica',
+                description: 'Jugosa hamburguesa de res con lechuga, tomate, queso y nuestra salsa especial',
+                price: 8.99,
+                icon: '🍔'
+            },
+            {
+                id: 2,
+                name: 'Pizza Margarita',
+                description: 'Pizza tradicional con salsa de tomate, mozzarella fresca y albahaca',
+                price: 12.99,
+                icon: '🍕'
+            },
+            {
+                id: 3,
+                name: 'Tacos al Pastor',
+                description: 'Tres tacos con carne al pastor, piña, cilantro y cebolla',
+                price: 9.99,
+                icon: '🌮'
+            },
+            {
+                id: 4,
+                name: 'Ensalada César',
+                description: 'Lechuga romana, crutones, parmesano y aderezo césar casero',
+                price: 7.99,
+                icon: '🥗'
+            },
+            {
+                id: 5,
+                name: 'Pasta Carbonara',
+                description: 'Pasta fresca con salsa cremosa, tocineta y parmesano',
+                price: 11.99,
+                icon: '🍝'
+            },
+            {
+                id: 6,
+                name: 'Sushi Roll',
+                description: 'Rollo de salmón, aguacate y pepino envuelto en arroz y alga nori',
+                price: 14.99,
+                icon: '🍣'
+            }
+        ];
+
+        let cart = [];
+        let currentItem = null;
+        let customization = {
+            size: 'Mediano',
+            sizePrice: 0,
+            extras: [],
+            notes: ''
+        };
+
+        // Cargar el menú
+        function loadMenu() {
+            const menuSection = document.getElementById('menu');
+            menuSection.innerHTML = menuItems.map(item => `
+                <div class="menu-item" onclick="openCustomizeModal(${item.id})">
+                    <div class="item-image">${item.icon}</div>
+                    <div class="item-details">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-description">${item.description}</div>
+                        <div class="item-price">$${item.price.toFixed(2)}</div>
+                    </div>
+                    <button class="btn-add" onclick="event.stopPropagation(); openCustomizeModal(${item.id})">
+                        Agregar
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Abrir modal de personalización
+        function openCustomizeModal(itemId) {
+            currentItem = menuItems.find(item => item.id === itemId);
+            document.getElementById('modalTitle').textContent = `Personaliza: ${currentItem.name}`;
+            
+            // Reset customization
+            customization = {
+                size: 'Mediano',
+                sizePrice: 0,
+                extras: [],
+                notes: ''
+            };
+            
+            // Reset form
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            document.querySelectorAll('.option-btn')[1].classList.add('selected');
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('specialNotes').value = '';
+            
+            document.getElementById('customizeModal').classList.add('active');
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('customizeModal').classList.remove('active');
+            currentItem = null;
+        }
+
+        // Seleccionar tamaño
+        function selectSize(size, extraPrice) {
+            customization.size = size;
+            customization.sizePrice = extraPrice;
+            
+            document.querySelectorAll('.option-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        // Confirmar personalización y agregar al carrito
+        function confirmCustomization() {
+            // Obtener extras seleccionados
+            const extrasElements = document.querySelectorAll('.extra-option input[type="checkbox"]:checked');
+            customization.extras = Array.from(extrasElements).map(el => ({
+                name: el.value,
+                price: parseFloat(el.dataset.price)
+            }));
+            
+            // Obtener notas
+            customization.notes = document.getElementById('specialNotes').value;
+            
+            // Calcular precio total del item
+            const extrasPrice = customization.extras.reduce((sum, extra) => sum + extra.price, 0);
+            const totalPrice = currentItem.price + customization.sizePrice + extrasPrice;
+            
+            // Agregar al carrito
+            cart.push({
+                ...currentItem,
+                customization: { ...customization },
+                finalPrice: totalPrice,
+                cartId: Date.now()
+            });
+            
+            updateCart();
+            closeModal();
+            showNotification('Producto agregado', `${currentItem.name} se agregó a tu carrito`);
+        }
+
+        // Actualizar carrito
+        function updateCart() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const btnOrder = document.getElementById('btnOrder');
+            
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = `
+                    <div class="empty-cart">
+                        <div class="empty-cart-icon">🍴</div>
+                        <p>Tu carrito está vacío</p>
+                    </div>
+                `;
+                cartTotal.style.display = 'none';
+                btnOrder.disabled = true;
+                return;
+            }
+            
+            cartItemsDiv.innerHTML = cart.map(item => {
+                const extrasText = item.customization.extras.length > 0 
+                    ? item.customization.extras.map(e => e.name).join(', ')
+                    : 'Sin extras';
+                
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-header">
+                            <span class="cart-item-name">${item.icon} ${item.name}</span>
+                            <span class="cart-item-price">$${item.finalPrice.toFixed(2)}</span>
+                        </div>
+                        <div class="cart-item-custom">
+                            Tamaño: ${item.customization.size}<br>
+                            Extras: ${extrasText}
+                            ${item.customization.notes ? `<br>Notas: ${item.customization.notes}` : ''}
+                        </div>
+                        <button class="btn-remove" onclick="removeFromCart(${item.cartId})">Eliminar</button>
+                    </div>
+                `;
+            }).join('');
+            
+            const total = cart.reduce((sum, item) => sum + item.finalPrice, 0);
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+            cartTotal.style.display = 'block';
+            btnOrder.disabled = false;
+        }
+
+        // Eliminar del carrito
+        function removeFromCart(cartId) {
+            cart = cart.filter(item => item.cartId !== cartId);
+            updateCart();
+        }
+
+        // Realizar pedido
+        function placeOrder() {
+            if (cart.length === 0) return;
+            
+            const orderNumber = Math.floor(Math.random() * 9000) + 1000;
+            
+            showNotification(
+                '✅ Pedido realizado',
+                `Tu pedido #${orderNumber} ha sido confirmado`
+            );
+            
+            // Simular preparación del pedido
+            setTimeout(() => {
+                showNotification(
+                    '👨‍🍳 En preparación',
+                    `Tu pedido #${orderNumber} está siendo preparado`
+                );
+            }, 3000);
+            
+            // Simular pedido listo
+            setTimeout(() => {
+                showNotification(
+                    '🎉 ¡Pedido listo!',
+                    `Tu pedido #${orderNumber} está listo para recoger`
+                );
+            }, 8000);
+            
+            // Limpiar carrito
+            cart = [];
+            updateCart();
+        }
+
+        // Mostrar notificación
+        function showNotification(title, message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationMessage').textContent = message;
+            
+            notification.classList.add('active');
+            
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 4000);
+        }
+
+        // Cerrar modal al hacer click fuera
+        document.getElementById('customizeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Inicializar
+        loadMenu();
+    </script>
+</body>
+</html>

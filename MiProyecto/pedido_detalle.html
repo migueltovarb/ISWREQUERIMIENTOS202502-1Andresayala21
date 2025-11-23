@@ -1,0 +1,21 @@
+{% extends "pedidos/base.html" %}
+{% block title %}Detalle Pedido{% endblock %}
+{% block content %}
+<h2>Detalle - Pedido #{{ pedido.id }}</h2>
+<p>Cliente: {{ pedido.nombre_cliente }} - {{ pedido.correo }}</p>
+<p>Estado: {% if pedido.estado == 'P' %}Pendiente{% else %}Listo{% endif %}</p>
+<h3>Items</h3>
+<ul>
+  {% for it in pedido.items.all %}
+    <li>{{ it.cantidad }} x {{ it.producto.nombre }} - {{ it.personalizacion }} - Subtotal: ${{ it.subtotal }}</li>
+  {% endfor %}
+</ul>
+<p>Total: ${{ pedido.total }}</p>
+{% if pedido.estado == 'P' %}
+  <form method="post" action="{% url 'pedido_listo' pedido.id %}">
+    {% csrf_token %}
+    <button type="submit">Marcar como LISTO (enviar notificación)</button>
+  </form>
+{% endif %}
+<p><a href="{% url 'menu' %}">Volver al menú</a></p>
+{% endblock %}
