@@ -1,1 +1,1 @@
-
+plataforma de pedidos para un reataurante donde los clientes puedan hacer pedidos en línea, personalizar su orden y recibir notificaciones cuando esté lista para recoger o enviar
